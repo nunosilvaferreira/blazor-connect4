@@ -1,0 +1,145 @@
+.game-wrap {
+    max-width: 62rem;
+}
+
+.drop-controls {
+    width: 28rem;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.drop-button {
+    border: 0;
+    border-radius: 0.35rem;
+    padding: 0.45rem 0;
+    background-color: #0d6efd;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.drop-button:hover {
+    background-color: #0b5ed7;
+}
+
+.status-area {
+    min-height: 3.4rem;
+    width: 28rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.status-area .alert {
+    margin: 0;
+    padding: 0.3rem 0.55rem;
+}
+
+.board-stage {
+    position: relative;
+    width: 28rem;
+    height: 24rem;
+}
+
+.board {
+    width: 28rem;
+    height: 24rem;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    background-color: var(--board-bg);
+    border: 0.35rem solid var(--board-bg);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 0.9rem rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+.board-slot {
+    width: 4rem;
+    height: 4rem;
+    display: block;
+    position: relative;
+}
+
+.board-hole {
+    width: 3.35rem;
+    height: 3.35rem;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: inset 0 -0.08rem 0.18rem rgba(0, 0, 0, 0.14);
+    position: absolute;
+    left: 0.33rem;
+    top: 0.33rem;
+}
+
+.piece {
+    width: 3.35rem;
+    height: 3.35rem;
+    border-radius: 50%;
+    position: absolute;
+    top: 0.33rem;
+    display: block;
+    z-index: 1;
+    animation-timing-function: cubic-bezier(.5, .05, 1, .5);
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+.player1 {
+    background-color: var(--player1);
+    box-shadow: 0 0 0 0.22rem rgba(255, 0, 0, 0.28);
+}
+
+.player2 {
+    background-color: var(--player2);
+    box-shadow: 0 0 0 0.22rem rgba(255, 230, 0, 0.36);
+}
+
+.col0 { left: 0.33rem; }
+.col1 { left: 4.33rem; }
+.col2 { left: 8.33rem; }
+.col3 { left: 12.33rem; }
+.col4 { left: 16.33rem; }
+.col5 { left: 20.33rem; }
+.col6 { left: 24.33rem; }
+
+.drop1 { animation-duration: 0.95s; animation-name: drop1; }
+.drop2 { animation-duration: 0.86s; animation-name: drop2; }
+.drop3 { animation-duration: 0.78s; animation-name: drop3; }
+.drop4 { animation-duration: 0.7s; animation-name: drop4; }
+.drop5 { animation-duration: 0.63s; animation-name: drop5; }
+.drop6 { animation-duration: 0.55s; animation-name: drop6; }
+
+@keyframes drop1 { from { transform: translateY(-4rem); } to { transform: translateY(20rem); } }
+@keyframes drop2 { from { transform: translateY(-4rem); } to { transform: translateY(16rem); } }
+@keyframes drop3 { from { transform: translateY(-4rem); } to { transform: translateY(12rem); } }
+@keyframes drop4 { from { transform: translateY(-4rem); } to { transform: translateY(8rem); } }
+@keyframes drop5 { from { transform: translateY(-4rem); } to { transform: translateY(4rem); } }
+@keyframes drop6 { from { transform: translateY(-4rem); } to { transform: translateY(0rem); } }
+
+.history {
+    margin-top: 1rem;
+    width: 28rem;
+    border: 1px solid #d5dce4;
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.9rem;
+    background: #f8fafc;
+}
+
+.history h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.05rem;
+}
+
+.history p,
+.history ol {
+    margin: 0;
+}
+
+.history ol {
+    padding-left: 1.2rem;
+}

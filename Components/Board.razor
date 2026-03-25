@@ -1,0 +1,136 @@
+@using System.Drawing
+@inject GameState State
+
+<HeadContent>
+    <style>
+        :root {
+            --board-bg: @ColorTranslator.ToHtml(BoardColor);
+            --player1: @ColorTranslator.ToHtml(Player1Color);
+            --player2: @ColorTranslator.ToHtml(Player2Color);
+        }
+    </style>
+</HeadContent>
+
+<div class="game-wrap">
+    <nav class="drop-controls" aria-label="Column controls">
+        @for (byte i = 0; i < 7; i++)
+        {
+            var col = i;
+            <button type="button" class="drop-button" title="Drop piece in this column" @onclick="() => PlayPiece(col)">Drop</button>
+        }
+    </nav>
+
+    <article class="status-area">
+        @if (!string.IsNullOrWhiteSpace(winnerMessage))
+        {
+            <span class="alert alert-success">@winnerMessage</span>
+        }
+        <button type="button" class="btn btn-primary btn-sm" style="@ResetStyle" @onclick="ResetGame">Reset Game</button>
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <span class="alert alert-danger">@errorMessage</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(CurrentTurnText))
+        {
+            <span class="alert alert-info">@CurrentTurnText</span>
+        }
+    </article>
+
+    <div class="board-stage" aria-label="Connect Four board">
+        <div class="board">
+            @for (var i = 0; i < 42; i++)
+            {
+                <span class="board-slot">
+                    <span class="board-hole"></span>
+                </span>
+            }
+        </div>
+        @for (var i = 0; i < 42; i++)
+        {
+            <span class="@pieces[i]"></span>
+        }
+    </div>
+
+    <section class="history" aria-label="Move history">
+        <h2>Move History</h2>
+        @if (moveHistory.Count == 0)
+        {
+            <p>No moves yet.</p>
+        }
+        else
+        {
+            <ol>
+                @foreach (var move in moveHistory)
+                {
+                    <li>Turn @move.Turn: Player @move.Player -> Column @move.Column, Row @move.Row</li>
+                }
+            </ol>
+        }
+    </section>
+</div>
+
+@code {
+    [Parameter]
+    public Color BoardColor { get; set; } = ColorTranslator.FromHtml("blue");
+
+    [Parameter]
+    public Color Player1Color { get; set; } = ColorTranslator.FromHtml("red");
+
+    [Parameter]
+    public Color Player2Color { get; set; } = ColorTranslator.FromHtml("yellow");
+
+    private string[] pieces = new string[42];
+    private string winnerMessage = string.Empty;
+    private string errorMessage = string.Empty;
+    private readonly List<MoveEntry> moveHistory = [];
+
+    private string CurrentTurnText => string.IsNullOrWhiteSpace(winnerMessage)
+        ? $"Player {State.PlayerTurn}'s turn"
+        : string.Empty;
+
+    private string ResetStyle => string.IsNullOrWhiteSpace(winnerMessage)
+        ? "display: none;"
+        : string.Empty;
+
+    protected override void OnInitialized()
+    {
+        ResetGame();
+    }
+
+    private void PlayPiece(byte col)
+    {
+        errorMessage = string.Empty;
+
+        try
+        {
+            var player = State.PlayerTurn;
+            var turn = State.CurrentTurn;
+            var landingRow = State.PlayPiece(col);
+            pieces[turn] = $"piece player{player} col{col} drop{landingRow}";
+            moveHistory.Add(new MoveEntry(turn + 1, player, (byte)(col + 1), landingRow));
+        }
+        catch (ArgumentException ex)
+        {
+            errorMessage = ex.Message;
+        }
+
+        winnerMessage = State.CheckForWin() switch
+        {
+            GameState.WinState.Player1_Wins => "Player 1 wins!",
+            GameState.WinState.Player2_Wins => "Player 2 wins!",
+            GameState.WinState.Tie => "It's a tie!",
+            _ => string.Empty
+        };
+    }
+
+    private void ResetGame()
+    {
+        State.ResetBoard();
+        winnerMessage = string.Empty;
+        errorMessage = string.Empty;
+        pieces = new string[42];
+        moveHistory.Clear();
+    }
+
+    private readonly record struct MoveEntry(int Turn, byte Player, byte Column, byte Row);
+}

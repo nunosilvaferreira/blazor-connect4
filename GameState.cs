@@ -5,6 +5,7 @@ public sealed class GameState
     private const int Rows = 6;
     private const int Columns = 7;
     private readonly byte[,] _board = new byte[Rows, Columns];
+    private byte _nextStartingPlayer = 1;
 
     public enum WinState
     {
@@ -21,7 +22,7 @@ public sealed class GameState
     public void ResetBoard()
     {
         Array.Clear(_board);
-        CurrentTurn = 0;
+        CurrentTurn = _nextStartingPlayer == 2 ? 1 : 0;
     }
 
     public byte PlayPiece(byte col)
@@ -68,12 +69,20 @@ public sealed class GameState
                     HasConnectFour(row, col, 1, 1, player) ||
                     HasConnectFour(row, col, 1, -1, player))
                 {
-                    return player == 1 ? WinState.Player1_Wins : WinState.Player2_Wins;
+                    var winner = player == 1 ? WinState.Player1_Wins : WinState.Player2_Wins;
+                    _nextStartingPlayer = winner == WinState.Player2_Wins ? (byte)2 : (byte)1;
+                    return winner;
                 }
             }
         }
 
-        return CurrentTurn == Rows * Columns ? WinState.Tie : WinState.None;
+        if (CurrentTurn == Rows * Columns)
+        {
+            _nextStartingPlayer = 1;
+            return WinState.Tie;
+        }
+
+        return WinState.None;
     }
 
     private bool HasConnectFour(int row, int col, int rowStep, int colStep, byte player)
